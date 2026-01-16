@@ -1,0 +1,10 @@
+streamlit
+ollama
+faster-whisper
+ultralytics
+ffmpeg-python
+opencv-python-headless
+pyyaml
+torch
+torchvision
+torchaudio

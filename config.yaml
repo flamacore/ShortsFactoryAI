@@ -1,0 +1,21 @@
+# Configuration for Shorts Generator
+
+folders:
+  input: "assets/input"
+  output: "assets/output"
+  temp: "assets/temp"
+  logs: "logs"
+
+models:
+  vision_model: "qwen3-vl:4b" # User has this installed
+  context_model: "deepseek-r1:8b" # User has this installed
+  whisper_size: "medium"
+
+video:
+  target_resolution: [1080, 1920]
+  max_shorts: 3
+  chunk_duration_seconds: 300 # 5 minutes
+
+gpu:
+  use_nvenc: true
+  device: "cuda"
