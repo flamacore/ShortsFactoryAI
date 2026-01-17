@@ -1,6 +1,9 @@
-# YouTube Shorts AI Factory
+# ShortsFactory AI
 
 An automated tool to create viral shorts from long-form videos using local AI.
+
+## Repository
+[https://github.com/flamacore/ShortsFactoryAI](https://github.com/flamacore/ShortsFactoryAI)
 
 ## Features
 - **GPU Accelerated**: Uses CUDA for Whisper, Vision, Face Detection, and Rendering (NVENC).
