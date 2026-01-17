@@ -86,10 +86,25 @@ with st.sidebar:
     
     max_shorts = st.slider("Max Shorts", 1, 5, config['video']['max_shorts'])
     
+    # Cropping Mode
+    crop_options = {
+        "Face Detection (Smart)": "face",
+        "Center Crop (Fast)": "center"
+    }
+    selected_crop_label = st.selectbox(
+        "✂️ Cropping Mode",
+        list(crop_options.keys()),
+        index=0,
+        help="Choose how to crop the landscape video into vertical shorts."
+    )
+    crop_mode = crop_options[selected_crop_label]
+
     # Update config in memory (for this session)
     config['models']['vision_model'] = vision_model
     config['models']['context_model'] = context_model
     config['video']['max_shorts'] = max_shorts
+    if 'video' not in config: config['video'] = {}
+    config['video']['crop_mode'] = crop_mode
     
     st.divider()
     st.markdown("### 🖥️ Hardware Stats")

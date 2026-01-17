@@ -31,7 +31,8 @@ class VideoProcessor:
         logger.info(f"Rendering Clip {index+1}: {start}-{end}")
         
         # 1. Smart Crop Calculation (Process Isolation)
-        crop_x = self._calculate_smart_crop(video_path, start, end)
+        crop_mode = self.config.get('video', {}).get('crop_mode', 'face')
+        crop_x = self._calculate_crop_x(video_path, start, end, crop_mode)
         
         # 2. Prepare Subtitles
         # Filter words that fall into this clip
@@ -152,10 +153,10 @@ class VideoProcessor:
                 
         return words
 
-    def _calculate_smart_crop(self, video_path, start, end):
+    def _calculate_crop_x(self, video_path, start, end, mode='face'):
         """
-        Analyzes the segment to find the average X position of the main face.
-        Returns the x value for the top-left corner of the 9:16 crop.
+        Calculates the X position for the 9:16 crop.
+        Modes: 'face' (YOLO), 'center' (Simple).
         """
         try:
             # Check dimensions first using OpenCV to avoid moviepy overhead
@@ -164,6 +165,13 @@ class VideoProcessor:
             frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
             cap.release()
             
+            target_width = int(frame_height * 9/16)
+            
+            if mode == 'center':
+                logger.info("Using center crop mode.")
+                return (frame_width - target_width) / 2
+
+            # Default: Face Detection
             # Run YOLO in isolated subprocess
             # Use sys.executable to ensure we use the same venv python
             script_path = os.path.join(os.path.dirname(__file__), "yolo_crop_subprocess.py")
@@ -175,14 +183,12 @@ class VideoProcessor:
             if result.returncode != 0:
                 logger.error(f"YOLO subprocess failed: {result.stderr}")
                 logger.warning("Falling back to center crop.")
-                target_width = int(frame_height * 9/16)
                 return (frame_width - target_width) / 2
                 
             avg_x = float(result.stdout.strip())
             logger.info(f"Smart Crop Target X: {avg_x}")
 
             # Calculate crop window
-            target_width = int(frame_height * 9/16)
             crop_x = int(avg_x - (target_width / 2))
             
             # Clamp bounds

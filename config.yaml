@@ -15,6 +15,7 @@ video:
   target_resolution: [1080, 1920]
   max_shorts: 3
   chunk_duration_seconds: 300 # 5 minutes
+  crop_mode: "face"
 
 gpu:
   use_nvenc: true
