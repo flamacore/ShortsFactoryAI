@@ -163,9 +163,20 @@ if uploaded_file:
         try:
             # 1. Init Engines
             status_text.text("Initializing Engines...")
+            
+            # Create run-specific output folder (separate for each click)
+            run_timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            run_folder_name = f"run_{run_timestamp}"
+            run_output_dir = os.path.join(config['folders']['output'], run_folder_name)
+            if not os.path.exists(run_output_dir):
+                os.makedirs(run_output_dir)
+                
+            update_console(f"Output folder created: {run_folder_name}")
+            
             analyzer = VideoAnalyzer(config, st.session_state.ollama_svc)
             director = Director(config, st.session_state.ollama_svc)
-            processor = VideoProcessor(config)
+            # Pass the specific output dir to processor
+            processor = VideoProcessor(config, output_override=run_output_dir)
             
             # 2. Run Analysis
             update_console("Starting Analysis Pipeline...")
